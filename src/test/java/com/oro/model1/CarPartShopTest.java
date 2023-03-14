@@ -150,5 +150,16 @@ public class CarPartShopTest {
         assertEquals(2, orderCount);
     }
 
+    @Test
+    void testGetCustomerByEmail() {
+        Customer customer1 = new Customer("John Doe", "johndoe@example.com");
+        Customer customer2 = new Customer("Jane Smith", "janesmith@example.com");
+        customerRepository.saveAll(Arrays.asList(customer1, customer2));
+
+        String name = customerRepository.getCustomerByEmail("Jane Smith");
+
+        assertEquals("John Doe", customer1.getName());
+    }
+
 
 }
