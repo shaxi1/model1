@@ -1,35 +1,86 @@
 package com.oro.model1;
 
-import com.oro.model1.Repository.*;
-import com.oro.model1.Service.*;
-import com.oro.model1.Model.*;
+import com.oro.model1.Model.Car;
+import com.oro.model1.Model.Customer;
+import com.oro.model1.Model.Order;
+import com.oro.model1.Model.Part;
+import com.oro.model1.Repository.CarRepository;
+import com.oro.model1.Repository.CustomerRepository;
+import com.oro.model1.Repository.OrderRepository;
+import com.oro.model1.Repository.PartRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class CarPartShopTest {
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private PartRepository partRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
+    @BeforeEach
+    public void clearDatabase() {
+        orderRepository.deleteAll();
+        customerRepository.deleteAll();
+        partRepository.deleteAll();
+        carRepository.deleteAll();
+    }
+
     @Test
-    public void testCountOrdersByPart() {
-        Order order = new Order();
-        order.setOrderDate(String.valueOf(LocalDate.now()));
+    public void testAddOrdersAndCountAll() {
+        Customer customer1 = new Customer("John Doe", "johndoe@example.com");
+        Customer customer2 = new Customer("Jane Smith", "janesmith@example.com");
+        customerRepository.saveAll(Arrays.asList(customer1, customer2));
 
-        Part part = new Part();
-        part.setName("Engine");
+        Car car1 = new Car("Toyota", "Corolla");
+        Car car2 = new Car("Honda", "Civic");
+        carRepository.saveAll(Arrays.asList(car1, car2));
 
-        order.getParts().add(part);
+        Part part1 = new Part("Engine");
+        Part part2 = new Part("Transmission");
+        partRepository.saveAll(Arrays.asList(part1, part2));
 
-        orderRepository.save(order);
+        /* compose some orders */
+        Order order1 = new Order(customer1, "2022-01-01", 20000.00);
+        Set<Part> parts1 = new HashSet<>();
+        parts1.add(part1);
 
-        Long count = orderRepository.countOrdersByPart(part.getId());
-        assertEquals(1, count.longValue());
+        order1.setParts(parts1);
+        orderRepository.save(order1);
+
+        Order order2 = new Order(customer2, "2022-01-02", 25000.00);
+        Set<Part> parts2 = new HashSet<>();
+        parts2.add(part2);
+
+        order2.setParts(parts2);
+        orderRepository.save(order2);
+
+        Iterable<Order> orders = orderRepository.findAll();
+        System.out.println("All Orders:");
+        orders.forEach(System.out::println);
+
+        long orderRepoCount = orderRepository.count();
+        System.out.println("Total number of orders: " + orderRepoCount);
+
+        /* asserts */
+        List<Order> orderList = StreamSupport.stream(orders.spliterator(), false).toList();
+        assertEquals(2, orderList.size());
+        assertEquals(2, orderRepoCount);
     }
 }

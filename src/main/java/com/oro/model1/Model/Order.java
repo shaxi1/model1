@@ -29,10 +29,18 @@ public class Order {
 
     private double orderPrice;
 
+    private String dateOfDelivery;
+
     @ManyToMany
     @JoinTable(
-            name = "orders_parts",
+            name = "order_part",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "part_id"))
     private Set<Part> parts = new HashSet<>();
+
+    public Order(Customer customer, String date, double price) {
+        this.customer = customer;
+        this.orderDate = date;
+        this.orderPrice = price;
+    }
 }
