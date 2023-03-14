@@ -161,5 +161,18 @@ public class CarPartShopTest {
         assertEquals("John Doe", customer1.getName());
     }
 
+    @Test
+    void testGetPartsInPriceRange() {
+        Part part1 = new Part("Engine", 1000.00);
+        Part part2 = new Part("Transmission", 2000.00);
+        Part part3 = new Part("Brakes", 3000.00);
+        Part part4 = new Part("Tires", 4000.00);
+        partRepository.saveAll(Arrays.asList(part1, part2, part3, part4));
+
+        List<Part> parts = partRepository.findPartsByPriceRange(1000.00, 3000.00);
+
+        assertEquals(3, parts.size());
+    }
+
 
 }

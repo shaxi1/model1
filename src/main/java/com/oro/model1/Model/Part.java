@@ -23,6 +23,8 @@ public class Part {
 
     private String name;
 
+    private double price;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -33,5 +35,10 @@ public class Part {
 
     public Part(String name) {
         this.name = name;
+    }
+
+    public Part(String name, double price) {
+        this.name = name;
+        this.price = price;
     }
 }
