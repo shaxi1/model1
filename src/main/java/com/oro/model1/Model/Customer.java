@@ -21,8 +21,16 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
     private Long id;
+
     private String name;
+
+    private String email;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<Order> orders = new HashSet<>();
+
+    public Customer(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 }

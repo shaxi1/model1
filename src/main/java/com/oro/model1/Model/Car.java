@@ -24,10 +24,11 @@ public class Car {
     private String name;
     private String model;
 
-    @ManyToMany
-    @JoinTable(
-            name = "cars_parts",
-            joinColumns = @JoinColumn(name = "car_id"),
-            inverseJoinColumns = @JoinColumn(name = "part_id"))
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Part> parts = new HashSet<>();
+
+    public Car(String name, String model) {
+        this.name = name;
+        this.model = model;
+    }
 }

@@ -23,10 +23,22 @@ public class Part {
 
     private String name;
 
+    private double price;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany(mappedBy = "parts")
-    private Set<Car> cars = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "car_id")
+    private Car car;
+
+    public Part(String name) {
+        this.name = name;
+    }
+
+    public Part(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
 }
