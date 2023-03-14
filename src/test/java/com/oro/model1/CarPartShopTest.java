@@ -83,4 +83,40 @@ public class CarPartShopTest {
         assertEquals(2, orderList.size());
         assertEquals(2, orderRepoCount);
     }
+
+    @Test
+    void testGetOrderCountForPart() {
+        Customer customer1 = new Customer("John Doe", "johndoe@example.com");
+        Customer customer2 = new Customer("Jane Smith", "janesmith@example.com");
+        customerRepository.saveAll(Arrays.asList(customer1, customer2));
+
+        Part part1 = new Part("Engine");
+        Part part2 = new Part("Transmission");
+        partRepository.saveAll(Arrays.asList(part1, part2));
+
+        /* compose some orders */
+        Order order1 = new Order(customer1, "2022-01-01", 20000.00); // includes Engine part
+        Order order2 = new Order(customer2, "2022-01-02", 25000.00);
+        Order order3 = new Order(customer1, "2022-01-01", 20000.00); // includes Engine part
+
+
+        Set<Part> parts1 = new HashSet<>();
+        parts1.add(part1);
+        parts1.add(part2);
+
+        Set<Part> parts2 = new HashSet<>();
+        parts2.add(part1);
+
+        order1.setParts(parts1); // includes Engine part
+        order2.setParts(parts2);
+        order3.setParts(parts1); // includes Engine part
+
+        orderRepository.saveAll(Arrays.asList(order1, order2));
+        int orderCount = (int) orderRepository.getOrderCountForPart("Engine");
+
+        /* expect 2 Engine parts */
+        assertEquals(2, orderCount);
+    }
+
+
 }
